@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import Navbar from "./NavBar";
+const backgroundImage = require('../../assets/bg-2.jpg'); 
+
 
 const Itinerary = () => {
   const [items, setItems] = useState([]);
@@ -67,7 +70,17 @@ const Itinerary = () => {
   }, [reloadPage]);
 
   return (
-    <div className="max-w-lg mx-auto mt-8 p-6 bg-white shadow-md rounded-lg">
+    <>
+    <div
+      className="container min-w-full min-h-screen"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+    <Navbar/>
+    <div className="max-w-lg mx-auto mt-8 p-6  shadow-md rounded-lg" style={{backgroundColor: '#F6FCFF'}}>
       <h1 className="text-3xl font-bold mb-4 text-center">
         Plan your Trip
       </h1>
@@ -107,6 +120,8 @@ const Itinerary = () => {
         <p className="text-gray-500 mt-4">No items to display.</p>
       )}
     </div>
+    </div>
+    </>
   );
 };
 

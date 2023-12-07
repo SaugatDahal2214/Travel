@@ -12,9 +12,12 @@ import Home from "./components/screen/Home";
 import Post from "./components/screen/CreatePost";
 import Map from "./components/screen/Map2";
 import Itinerary from "./components/screen/Itinerary.js";
+import Recommendation from "./components/screen/recommendation.js";
+import PostByLocation from "./components/screen/PostByLocation.js";
+import OTPVerification from "./components/screen/OTPVerification.js";
 // import UserProfile from './components/screen/UserProfile';
 import PageNotFound from "./components/screen/PageNotFound";
-import Navbar from "./components/NavBar";
+import Navbar from "./components/screen/NavBar";
 
 /** auth middleware */
 import { AuthorizeUser, ProtectRoute } from "./middleware/auth";
@@ -55,6 +58,16 @@ const router = createBrowserRouter([
     element: <Home></Home>,
   },
   {
+    path: "/posts/:location",
+    element: <PostByLocation></PostByLocation>,
+  },
+
+  {
+    path: "/verifyEmail/:userId",
+    element: <OTPVerification></OTPVerification>,
+  },
+
+  {
     path: "/post",
     element: (
       <AuthorizeUser>
@@ -67,8 +80,13 @@ const router = createBrowserRouter([
     path: "/map",
     element: <Map />,
   },
+
   {
-    path: "/itinerary",
+    path: "/recommendation",
+    element: <Recommendation />,
+  },
+  {
+    path: "/Itinerary",
     element: <Itinerary />,
   },
   {
@@ -84,7 +102,6 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <main>
-      <Navbar />
       <RouterProvider router={router}></RouterProvider>
     </main>
   );

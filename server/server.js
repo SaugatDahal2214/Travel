@@ -28,6 +28,7 @@ app.disable('x-powered-by'); // less hackers know about our stack
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use('/uploads', express.static('uploads'))
+app.use('/posts/uploads', express.static('uploads'))
 
 const port = 8080;
 

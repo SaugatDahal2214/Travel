@@ -7,10 +7,12 @@ import convertToBase64 from '../../helper/convert';
 import useFetch from '../../hooks/fetch.hook';
 import { updateUser } from '../../helper/helper'
 import { useNavigate } from 'react-router-dom'
+import Navbar from "./NavBar";
 
 import styles from '../../styles/Username.module.css';
 import extend from '../../styles/Profile.module.css'
 
+const backgroundImage = require('../../assets/bg-2.jpg'); 
 export default function Profile() {
 
   const [file, setFile] = useState();
@@ -50,6 +52,7 @@ export default function Profile() {
 
   // logout handler function
   function userLogout(){
+    localStorage.removeItem('jwt');
     localStorage.removeItem('token');
     navigate('/')
   }
@@ -58,6 +61,17 @@ export default function Profile() {
   if(serverError) return <h1 className='text-xl text-red-500'>{serverError.message}</h1>
 
   return (
+
+    <>
+    <div
+      className="container min-w-full min-h-screen"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+    <Navbar/>
     <div className="container mx-auto">
 
       <Toaster position='top-center' reverseOrder={false}></Toaster>
@@ -106,8 +120,10 @@ export default function Profile() {
           </form>
 
         </div>
-      </div>\
+      </div>
     </div>
+    </div>
+    </>
   )
 }
 

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import toast, { Toaster } from "react-hot-toast";
+import toast, { Toaster } from 'react-hot-toast';
+import Navbar from "./NavBar";
+const backgroundImage = require('../../assets/bg-2.jpg'); 
 
 function ServicesAdmin() {
   const navigate = useNavigate();
@@ -46,7 +48,7 @@ function ServicesAdmin() {
 
   const handleCreatePost = () => {
     setIsCreatingPost(true);
-    toast.success("Post created.")
+    toast.success('Post created.');
     setTimeout(() => {
       navigate('/home'); // Reload the page
     }, 1500);
@@ -70,7 +72,6 @@ function ServicesAdmin() {
         if (res.data.code === 403 && res.data.message === 'Token Expired') {
           localStorage.setItem('token', null);
           navigate('/username');
-          
         } else {
           const altitudeData = [
             { name: 'Point 1', altitude: parseFloat(altitude1) },
@@ -88,68 +89,81 @@ function ServicesAdmin() {
   };
 
   return (
+    <>
+    <div
+      className="container min-h-screen min-w-full"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+    <Navbar/>
     <div className="container mx-auto max-w-screen-xl p-6">
       <Toaster position="top-center" reverseOrder={false}></Toaster>
-      <div className="bg-white shadow-md rounded-lg p-8">
-        <h1 className="text-2xl font-semibold mb-4">Create a Post</h1>
+      <div className=" shadow-md rounded-lg p-8" style={{backgroundColor: '#F6FCFF'}}>
+        <h1 className="text-3xl font-semibold text-center mb-6">Create a Post</h1>
         <div className="space-y-4">
           <input
             value={location}
             name="location"
             onChange={handleChange}
             placeholder="Location"
-            className="border border-gray-300 rounded-md w-full py-2 px-3"
+            className="border border-gray-300 rounded-md w-full py-2 px-3 focus:outline-none focus:border-blue-500"
           />
-          <input
+          <textarea
             value={description}
             name="description"
             onChange={handleChangeDesc}
             placeholder="Description"
-            className="border border-gray-300 rounded-md w-full py-2 px-3"
+            rows="3"
+            className="border border-gray-300 rounded-md w-full py-2 px-3 resize-none focus:outline-none focus:border-blue-500"
           />
-          <input
-            value={altitude1}
-            name="altitude1"
-            onChange={handleAltitude1}
-            placeholder="Altitude 1"
-            type="number"
-            className="border border-gray-300 rounded-md w-full py-2 px-3"
-          />
-          <input
-            value={altitude2}
-            name="altitude2"
-            onChange={handleAltitude2}
-            placeholder="Altitude 2"
-            type="number"
-            className="border border-gray-300 rounded-md w-full py-2 px-3"
-          />
-          <input
-            value={altitude3}
-            name="altitude3"
-            onChange={handleAltitude3}
-            placeholder="Altitude 3"
-            type="number"
-            className="border border-gray-300 rounded-md w-full py-2 px-3"
-          />
+          <div className="grid grid-cols-3 gap-4">
+            <input
+              value={altitude1}
+              name="altitude1"
+              onChange={handleAltitude1}
+              placeholder="Altitude 1"
+              type="number"
+              className="border border-gray-300 rounded-md w-full py-2 px-3 focus:outline-none focus:border-blue-500"
+            />
+            <input
+              value={altitude2}
+              name="altitude2"
+              onChange={handleAltitude2}
+              placeholder="Altitude 2"
+              type="number"
+              className="border border-gray-300 rounded-md w-full py-2 px-3 focus:outline-none focus:border-blue-500"
+            />
+            <input
+              value={altitude3}
+              name="altitude3"
+              onChange={handleAltitude3}
+              placeholder="Altitude 3"
+              type="number"
+              className="border border-gray-300 rounded-md w-full py-2 px-3 focus:outline-none focus:border-blue-500"
+            />
+          </div>
           <input
             value={rating}
             name="rating"
             onChange={handleRating}
             placeholder="Rating"
             type="number"
-            className="border border-gray-300 rounded-md w-full py-2 px-3"
+            className="border border-gray-300 rounded-md w-full py-2 px-3 focus:outline-none focus:border-blue-500"
           />
           <input
             type="file"
             name="imageUrl"
             onChange={handleImageChange}
-            className="border border-gray-300 rounded-md w-full py-2 px-3"
+            className="border border-gray-300 rounded-md w-full py-2 px-3 focus:outline-none focus:border-blue-500"
           />
 
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-4">
             <button
               onClick={handleCreatePost}
-              className={`bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-md ${
+              className={`bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-md ${
                 isCreatingPost ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               disabled={isCreatingPost}
@@ -160,6 +174,8 @@ function ServicesAdmin() {
         </div>
       </div>
     </div>
+    </div>
+    </>
   );
 }
 

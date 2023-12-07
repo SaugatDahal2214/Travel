@@ -1,16 +1,22 @@
 import React from "react";
-import logo from "../assets/logo.png";
+import trekkingTalesLogo from "../../assets/logo.png";
 
 function Navbar() {
   return (
     <nav className="bg-white-500 p-4">
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-white text-2xl font-semibold mx-10">
+        <div className="flex justify-center items-center px-6 ">
+        <div className="flex items-center mt-8">
           <img
-            src={logo}
-            alt="Logo"
-            className="logo h-20 border-1 rounded-full"
-          ></img>
+            src={trekkingTalesLogo}
+            className="image w-16 h-16 mr-2 rounded-full"
+            alt="Trekking Tales Logo"
+          />
+          <h1 className="title-logo text-3xl font-bold text-gray-800 ">Trekking Tales</h1>
+        </div>
+        {/* You can add additional elements or links on the right side if needed */}
+      </div>
         </div>
         <ul className="flex space-x-10">
           <li>
@@ -19,7 +25,7 @@ function Navbar() {
             </a>
           </li>
           <li>
-            <a href="#" className="text-black hover:text-blue-200">
+            <a href="/recommendation" className="text-black hover:text-blue-200">
               Recommendation
             </a>
           </li>

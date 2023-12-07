@@ -8,6 +8,9 @@ import useFetch from '../../hooks/fetch.hook';
 import { useAuthStore } from '../../store/store';
 import { verifyPassword } from '../../helper/helper';
 import styles from '../../styles/Username.module.css';
+import trekkingTalesLogo from '../../assets/logo.png'; // Import your Trekking Tales logo
+
+const backgroundImage = require('../../assets/bg-1.jpg'); // Import your background image
 
 export default function Password() {
   const navigate = useNavigate();
@@ -45,8 +48,29 @@ export default function Password() {
   if (serverError) return <h1 className='text-xl text-red-500'>{serverError.message}</h1>;
 
   return (
+    <div
+    className="container min-w-full"
+    style={{
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    }}
+  >
     <div className='container mx-auto'>
       <Toaster position='top-center' reverseOrder={false}></Toaster>
+
+            {/* Logo and Name Section */}
+            <div className="flex justify-center items-center px-6 ">
+        <div className="flex items-center mt-16">
+          <img
+            src={trekkingTalesLogo}
+            className="image w-24 h-25 mr-2 rounded-full"
+            alt="Trekking Tales Logo"
+          />
+          <h1 className="title text-3xl font-bold text-gray-800 ">Trekking Tales</h1>
+        </div>
+        {/* You can add additional elements or links on the right side if needed */}
+      </div>
 
       <div className='flex justify-center items-center h-screen'>
         <div className={styles.glass}>
@@ -72,16 +96,10 @@ export default function Password() {
               </button>
             </div>
 
-            <div className='text-center py-4'>
-              <span className='text-gray-500'>
-                Forgot Password? <Link className='text-blue-500' to='/recovery'>
-                  Recover Now
-                </Link>
-              </span>
-            </div>
           </form>
         </div>
       </div>
     </div>
+  /</div>
   );
 }

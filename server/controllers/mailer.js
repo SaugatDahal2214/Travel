@@ -1,59 +1,33 @@
 import nodemailer from 'nodemailer';
-import Mailgen from 'mailgen';
 
-// Replace with your Gmail email and password
-const GMAIL_EMAIL = 'your@gmail.com';
-const GMAIL_PASSWORD = 'your_password';
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'trekkingtrales@gmail.com', // Replace with your Gmail email
+    pass: 'shnj ekoi arjo bwkl', // Replace with your Gmail password
+  },
+});
 
-let nodeConfig = {
-    service: "gmail",
-    auth: {
-        user: GMAIL_EMAIL,
-        pass: GMAIL_PASSWORD,
-    }
-}
+// Function to send email verification link
+export const sendVerificationEmail = async (email, userId) => {
+  try {
+    const verificationLink = `http://localhost:3000/verifyEmail/${userId}`;
 
-let transporter = nodemailer.createTransport(nodeConfig);
+    // Email content
+    const mailOptions = {
+      from: 'trekkingtrales@gmail.com', // Replace with your email
+      to: email,
+      subject: 'Email Verification',
+      text: `Click on the following link to verify your email: ${verificationLink}`,
+    };
 
-let MailGenerator = new Mailgen({
-    theme: "default",
-    product: {
-        name: "Mailgen",
-        link: 'https://mailgen.js/'
-    }
-})
+    // Send email
+    await transporter.sendMail(mailOptions);
+    console.log('Verification Email sent successfully');
+  } catch (error) {
+    console.error('Failed to send verification email:', error);
+    throw new Error('Failed to send verification email');
+  }
+};
 
-/** POST: http://localhost:8080/api/registerMail 
- * @param: {
-  "username" : "example123",
-  "userEmail" : "your@gmail.com",
-  "text" : "",
-  "subject" : "",
-}
-*/
-export const registerMail = async (req, res) => {
-    const { username, userEmail, text, subject } = req.body;
-
-    // Body of the email
-    var email = {
-        body: {
-            name: username,
-        }
-    }
-
-    var emailBody = MailGenerator.generate(email);
-
-    let message = {
-        from: GMAIL_EMAIL,
-        to: userEmail,
-        subject: subject || "Signup Successful",
-        html: emailBody
-    }
-
-    // Send mail
-    transporter.sendMail(message)
-        .then(() => {
-            return res.status(200).send({ msg: "You should receive an email from us." })
-        })
-        .catch(error => res.status(500).send({ error }))
-}
+export default transporter;

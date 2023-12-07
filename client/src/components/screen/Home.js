@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { IoMdThumbsUp, IoMdThumbsDown, IoMdHeartEmpty, IoMdRemoveCircle, IoMdTrash } from "react-icons/io";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { IoMdHeart } from "react-icons/io";
-// import Post from "../../assets/Messi.jpg";
+import { IoMdThumbsUp, IoMdThumbsDown, IoMdTrash } from "react-icons/io";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import Modal from 'react-modal';
+import UserProfile from "./UserProfile"
+import Navbar from "./NavBar"
+const backgroundImage = require('../../assets/bg-2.jpg'); // Import your background image
 
-const PostCard = ({ props }) => {
+const PostCard = ({ post, showCreateButton = true, showRemoveButton = true }) => {
   const [data, setData] = useState([]);
+  const [showUserProfile, setShowUserProfile] = useState(false);
+  const [selectedUsername, setSelectedUsername] = useState(null);
   const [comment, setComment] = useState("");
 
   useEffect(() => {
@@ -25,15 +29,15 @@ const PostCard = ({ props }) => {
       })
       .then((response) => {
         const result = response.data;
-        console.log(result);
-        setData(result);
+        const sortedData = result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setData(sortedData);
+        setData(sortedData);
       })
       .catch((error) => {
         console.error(error);
       });
   }, []);
 
-  //like post
   const likePost = (id) => {
     fetch("http://localhost:8080/api/like", {
       method: "put",
@@ -47,19 +51,18 @@ const PostCard = ({ props }) => {
     })
       .then((res) => res.json())
       .then((result) => {
-        const newData = data.map((posts) => {
-          if (posts._id === result._id) {
-            return result;
+        const newData = data.map((post) => {
+          if (post._id === result._id) {
+            return { ...result, comments: post.comments }; // Preserve existing comments
           } else {
-            return posts;
+            return post;
           }
         });
         setData(newData);
         console.log(result);
       });
   };
-
-  //unlike post
+  
   const unlikePost = (id) => {
     fetch("http://localhost:8080/api/unlike", {
       method: "put",
@@ -73,17 +76,18 @@ const PostCard = ({ props }) => {
     })
       .then((res) => res.json())
       .then((result) => {
-        const newData = data.map((posts) => {
-          if (posts._id === result._id) {
-            return result;
+        const newData = data.map((post) => {
+          if (post._id === result._id) {
+            return { ...result, comments: post.comments }; // Preserve existing comments
           } else {
-            return posts;
+            return post;
           }
         });
         setData(newData);
         console.log(result);
       });
   };
+  
 
   //comment post
   const makeComment = (text, id) => {
@@ -100,18 +104,19 @@ const PostCard = ({ props }) => {
     })
       .then((res) => res.json())
       .then((result) => {
-        const newData = data.map((posts) => {
-          if (posts._id === result._id) {
-            return result;
-          } else {
-            return posts;
-          }
-        });
-        setData(newData);
+        setData((prevData) =>
+          prevData.map((post) =>
+            post._id === result._id ? { ...post, comments: result.comments } : post
+          )
+        );
         console.log(result);
         setComment("");
+      })
+      .catch((error) => {
+        console.error(error);
       });
   };
+  
 
   //delete post
   const removePost = (postId) => {
@@ -133,7 +138,6 @@ const PostCard = ({ props }) => {
       });
   };
 
-  // Function to render star rating
   const renderStarRating = (rating) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -155,100 +159,121 @@ const PostCard = ({ props }) => {
   };
 
   return (
-    <div className="home flex justify-center items-center flex-col space-y-4 ">
+    <>
+    <div
+      className="container min-w-full"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+    <Navbar/>
+    <div className="home flex justify-center items-center flex-col space-y-4 "
+    >
       <Toaster position="top-center" reverseOrder={false}></Toaster>
+      
       <Link to="/post">
-        <button className="add-btn bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-md">
+        {showCreateButton && (<button className="add-btn bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-md">
           {" "}
           Create Post{" "}
-        </button>
+        </button>)}
       </Link>
+
       {data.map((post, index) => {
-        // const altitudeData=post.altitudes
         const altitudeData = [
           { name: 'Starting', altitude: parseFloat(post.altitudes[0]) },
           { name: 'Peak', altitude: parseFloat(post.altitudes[1]) },
           { name: 'Ending', altitude: parseFloat(post.altitudes[2]) },
         ];
-        console.log(altitudeData);
+
         return (
           <div
             key={index}
-            className="max-w-3xl  bg-white shadow-2xl border-r-2 rounded-lg overflow-hidden"
+            className="container max-auto mt-8 p-4 max-w-3xl shadow-2xl border-r-2 rounded-lg overflow-hidden"
+            style={{backgroundColor: '#F6FCFF'}}
           >
-            {/* Profile image and username*/}
-            <div className="Profile flex py-4 px-5 space-x-96">
-              <div className="flex space-x-2">
-                <img
-                  className="border-r-4 h-8 w-12"
-                  src={post.postedBy.profile}
-                  alt="Profile"
-                />
-                <div className="px-4 py-2">
-                  <p className="text-gray-600 text-sm font-semibold">
-                    {post.postedBy ? post.postedBy.username : "Unknown User"}
-                  </p>
-                </div>
-              </div>
-              <button className="pl-24" onClick={() => removePost(post._id)}>
-                <IoMdTrash className="h-10 hover:text-red-500" size={22} style={{ cursor: "pointer" }} />
-              </button>
-            </div>
-            {/* Username */}
-            {/* Image */}
+
+<div className="Profile flex justify-between items-center py-4 px-5">
+  <div className="flex space-x-2 items-center">
+    <img
+      className="border-r-4 h-8 w-12"
+      src={post.postedBy.profile}
+      alt="Profile"
+    />
+    <div className="px-4 py-2">
+      <p className="text-gray-600 text-sm font-semibold">
+        <span style={{cursor: 'pointer'}}
+        onClick={()=>{
+          setSelectedUsername(post.postedBy.username);
+          setShowUserProfile(true);
+        }}>
+        {post.postedBy ? post.postedBy.username : "Unknown User"}
+        </span>
+      </p>
+    </div>
+  </div>
+  {showRemoveButton && (
+    <button className="trash" onClick={() => removePost(post._id)}>
+      <IoMdTrash className="h-10  hover:text-red-500" size={22} style={{ cursor: "pointer" }} />
+    </button>)}
+</div>
+
+
             <div>
-              <img src={post.imageUrl} alt="Post" className="w-full" />
-            
-            {altitudeData.length > 0 && (
-              <div className="mt-6 ">
-                <h2 className="text-xl font-semibold mb-2 text-center">Altitude Line Chart</h2>
-                <LineChart width={700} height={300} data={altitudeData}>
-                  <CartesianGrid stroke="#ccc" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="altitude" stroke="indigo" />
-                </LineChart>
-              </div>
-            
-            )}</div>
-            {/* Caption */}
+              {post.imageUrl && <img src={post.imageUrl} alt="Post" className="w-full mb-4 rounded-md" />}
+
+              {altitudeData.length > 0 && (
+                <div className="mt-6 ">
+                  <h2 className="text-xl font-semibold mb-2 text-center">Altitude Line Chart</h2>
+                  <LineChart width={700} height={300} data={altitudeData}>
+                    <CartesianGrid stroke="#ccc" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="altitude" stroke="indigo" />
+                  </LineChart>
+                </div>
+              )}
+            </div>
+
             <div className="px-4 py-2">
               <p className="text-gray-800 text-xl font-bold">{post.location}</p>
               <p className="text-gray-800 text-base">{post.description}</p>
-              <p className="text-gray-800 text-base">{post.likes.length} Likes</p>
               <div className="text-gray-800 text-base">
                 {renderStarRating(post.rating)}
               </div>
+              <p className="text-gray-800 text-base">{post.likes.length} Likes</p>
             </div>
-            {/* Like and Comment Icons */}
+
             <div className="flex justify-between items-center px-4 py-2">
               <div className="flex space-x-4">
                 {post.likes.includes(
                   JSON.parse(localStorage.getItem("user")).userId
                 ) ? (
-                  <button
-                    onClick={() => {
-                      unlikePost(post._id);
-                    }}
-                  >
-                    <IoMdThumbsDown size={32} className=" text-black" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      likePost(post._id);
-                    }}
-                  >
-                    <IoMdThumbsUp size={32}  />
-                  </button>
-                )}
+                    <button
+                      onClick={() => {
+                        unlikePost(post._id);
+                      }}
+                    >
+                      <IoMdThumbsDown size={32} className="unlik hover:text-blue-900" style={{color:'#3F86E8'}} />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        likePost(post._id);
+                      }}
+                    >
+                      <IoMdThumbsUp size={32} />
+                    </button>
+                  )}
               </div>
             </div>
+
             {post.comments.map((comment) => {
               return (
-                <div key={comment._id} className="comm">
+                <div key={comment._id} className="comm p-2 my-2 rounded-md" style={{backgroundColor: '#DEF1F9'}}>
                   <p className="text-gray-600 text-sm font-semibold px-3">
                     {comment.postedBy ? comment.postedBy.username : ""}
                   </p>
@@ -256,6 +281,7 @@ const PostCard = ({ props }) => {
                 </div>
               );
             })}
+
             <div className="add-comment flex justify-between items-center px-2 py-2">
               <input
                 type="text"
@@ -277,6 +303,33 @@ const PostCard = ({ props }) => {
         );
       })}
     </div>
+    </div>
+    <Modal
+  isOpen={showUserProfile}
+  onRequestClose={() => {
+    setShowUserProfile(false);
+    setSelectedUsername(null);
+  }}
+  contentLabel="User Details Modal"
+  style={{
+    overlay: {
+      backgroundColor: 'rgba(1, 1, 1, 0.8)', // Adjust the overlay background color and opacity
+    },
+    content: {
+      backgroundImage:`url(${backgroundImage})`,
+      borderRadius: '10px',
+      maxWidth: '700px', // Set your desired width
+      margin: 'auto', // Center horizontally
+      marginTop: '50px', // Add space from the top
+      padding: '20px',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adjust the box shadow
+    },
+  }}
+>
+  {selectedUsername && <UserProfile username={selectedUsername} />}
+</Modal>
+
+    </>
   );
 };
 

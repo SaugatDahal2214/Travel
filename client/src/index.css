@@ -12,3 +12,14 @@ body{
     /* background: #49499f; */
     /* background-image: url('./assets/Background.png'); */
 }
+
+.title{
+    font-family: 'Ephesis', cursive;
+    font-size: 3em;
+    letter-spacing: 3px;
+}
+.title-logo{
+    font-family: 'Ephesis', cursive;
+    font-size: 1em;
+    letter-spacing: 3px;
+}

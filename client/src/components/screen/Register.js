@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import avatar from '../../assets/profile.png';
 import toast, { Toaster } from 'react-hot-toast';
 import { useFormik } from 'formik';
-import { registerValidation } from '../../helper/validate';
 import convertToBase64 from '../../helper/convert';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 
 import styles from '../../styles/Username.module.css';
 
-export default function Register() {
-  const navigate = useNavigate();
+import trekkingTalesLogo from '../../assets/logo.png'; // Import your Trekking Tales logo
+
+const backgroundImage = require('../../assets/bg-1.jpg');
+
+const Register = () => {
   const [file, setFile] = useState('');
 
   const formik = useFormik({
@@ -19,56 +21,57 @@ export default function Register() {
       username: '',
       password: '',
     },
-    validate: registerValidation,
-    validateOnBlur: false,
-    validateOnChange: false,
     onSubmit: async (values) => {
       try {
-        // Make the Axios request
         const response = await axios.post('/api/register', values);
 
-        // Check the response status code
         if (response.status === 201) {
-          // Registration successful, handle accordingly
-          toast.success('Registration successful.');
-          navigate('/'); // Redirect to the desired page
+          // Registration successful
+          toast.success('Please check your email for verification.');
         } else {
-          // Handle other response status codes if needed
-          toast.error('Registration failed.');
+          console.error('Registration failed.');
         }
       } catch (error) {
-        // Axios request failed, handle the error
-        if (error.response) {
-          // The request was made, but the server responded with a non-2xx status code
-          toast.error(`Request failed with status code ${error.response.status}`);
-        } else if (error.request) {
-          // The request was made, but no response was received
-          toast.error('No response received from the server.');
-        } else {
-          // Something else went wrong
-          toast.error('An error occurred while making the request.');
-        }
+        console.error('Registration failed. Please try again.', error);
       }
     },
   });
 
-  /** formik doesn't support file upload, so we need to create this handler */
   const onUpload = async (e) => {
     const base64 = await convertToBase64(e.target.files[0]);
     setFile(base64);
   };
 
   return (
+    <div
+    className="container min-w-full min-h-screen"
+    style={{
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    }}
+  >
+       {/* Logo and Name Section */}
+       <div className="flex justify-center items-center px-6 ">
+        <div className="flex items-center mt-16">
+          <img
+            src={trekkingTalesLogo}
+            className="image w-24 h-25 mr-2 rounded-full"
+            alt="Trekking Tales Logo"
+          />
+          <h1 className="title text-3xl font-bold text-gray-800 ">Trekking Tales</h1>
+        </div>
+        {/* You can add additional elements or links on the right side if needed */}
+      </div>
+
     <div className="container mx-auto">
       <Toaster position="top-center" reverseOrder={false}></Toaster>
 
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center mt-10">
         <div className={`${styles.glass} ${styles.formContainer}`}>
           <div className="title flex flex-col items-center">
             <h4 className="text-5xl font-bold">Register</h4>
-            <span className="py-4 text-xl w-2/3 text-center text-gray-500">
-              Happy to join you!
-            </span>
+            <span className="py-4 text-xl w-2/3 text-center text-gray-500">Happy to join you!</span>
           </div>
 
           <form className="py-1" onSubmit={formik.handleSubmit}>
@@ -76,7 +79,7 @@ export default function Register() {
               <label htmlFor="profile">
                 <img src={file || avatar} className={styles.profile_img} alt="avatar" />
               </label>
-              <input onChange={onUpload} type="file" id="profile" name="profile" style={{display: 'none'}}/>
+              <input onChange={onUpload} type="file" id="profile" name="profile" style={{ display: 'none' }} />
             </div>
 
             <div className="textbox flex flex-col items-center gap-6">
@@ -90,7 +93,8 @@ export default function Register() {
 
             <div className="text-center py-4">
               <span className="text-gray-500">
-                Already Registered? <Link className="text-blue-500" to="/">
+                Already Registered?{' '}
+                <Link className="text-blue-500" to="/">
                   Login Now
                 </Link>
               </span>
@@ -99,5 +103,8 @@ export default function Register() {
         </div>
       </div>
     </div>
+    </div>
   );
-}
+};
+
+export default Register;
