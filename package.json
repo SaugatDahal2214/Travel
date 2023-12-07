@@ -1,0 +1,19 @@
+{
+  "name": "travel",
+  "version": "1.0.0",
+  "description": "Travel Guide App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SaugatDahal2214/Travel.git"
+  },
+  "author": "Saugat Dahal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SaugatDahal2214/Travel/issues"
+  },
+  "homepage": "https://github.com/SaugatDahal2214/Travel#readme"
+}
